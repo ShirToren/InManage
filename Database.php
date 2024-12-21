@@ -51,5 +51,15 @@ class Database
         // execute the query with the parameters
         return $stmt->execute($params);
     }
+    //  DELETE
+    public function delete($table, $where) {
+        $whereClause = implode(" AND ", array_map(function($key) {
+            return "$key = ?";
+        }, array_keys($where)));
     
+        $sql = "DELETE FROM $table WHERE $whereClause";
+        $stmt = $this->pdo->prepare($sql);
+    
+        return $stmt->execute(array_values($where));
+    }
 }
