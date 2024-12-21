@@ -25,4 +25,31 @@ class Database
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(array_values($data));
     }
+
+    //  UPDATE
+    public function update($table, $data, $where) {
+        // name = ?
+        // email = ?
+        // active = ?
+        // for the SET clause
+        $setClause = implode(", ", array_map(function($key) {
+            return "$key = ?";
+        }, array_keys($data)));
+    
+        // id = ?
+        // for the WHERE clause
+        $whereClause = implode(" AND ", array_map(function($key) {
+            return "$key = ?";
+        }, array_keys($where)));
+    
+        $sql = "UPDATE $table SET $setClause WHERE $whereClause";
+        $stmt = $this->pdo->prepare($sql);
+    
+        // merge values for SET and WHERE clauses
+        $params = array_merge(array_values($data), array_values($where));
+    
+        // execute the query with the parameters
+        return $stmt->execute($params);
+    }
+    
 }
